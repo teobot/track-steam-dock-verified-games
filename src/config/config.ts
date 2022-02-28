@@ -1,27 +1,27 @@
-const convict = require('convict');
-const dotenv = require("dotenv").config();
+import convict from 'convict';
+require('dotenv').config()
 
 export default convict({
+  jwt_secret: {
+    format: String,
+    default: process.env.JWT_SECRET,
+  },
+  version: {
+    format: String,
+    default: "v1",
+  },
   db: {
-    cluster: {
-      doc: "The cluster name",
-      format: String,
-      default: process.env.DB_CLUSTER
-    },
-    database: {
-      doc: "The database name",
-      format: String,
-      default: process.env.DB_DATABASE
-    },
     username: {
-      doc: "The database username",
       format: String,
-      default: process.env.DB_USERNAME
+      default: process.env.MONGODB_USERNAME,
     },
     password: {
-      doc: "The database password",
       format: String,
-      default: process.env.DB_PASSWORD
-    }
-  }
-})
+      default: process.env.MONGODB_PASSWORD,
+    },
+    database: {
+      format: String,
+      default: process.env.MONGODB_DATABASE,
+    },
+  },
+});
