@@ -2,26 +2,14 @@ import convict from 'convict';
 require('dotenv').config()
 
 export default convict({
-  jwt_secret: {
-    format: String,
-    default: process.env.JWT_SECRET,
-  },
-  version: {
-    format: String,
-    default: "v1",
-  },
-  db: {
-    username: {
+  github: {
+    token: {
       format: String,
-      default: process.env.MONGODB_USERNAME,
+      default: process.env.GITHUB_TOKEN,
     },
-    password: {
+    gist_id: {
       format: String,
-      default: process.env.MONGODB_PASSWORD,
-    },
-    database: {
-      format: String,
-      default: process.env.MONGODB_DATABASE,
+      default: process.env.GIST_ID,
     },
   },
 });

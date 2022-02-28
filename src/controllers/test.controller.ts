@@ -1,37 +1,47 @@
-var jwt = require("jsonwebtoken");
+import axios from "axios";
 
-// const { getAppReviews } = require("../api/steamdb")
+import { Octokit } from "@octokit/core";
 
-const hello = (req, res) => {
-    return res.send({ message: "Hello from Server!" });
-};
+import config from "../config/config";
+
+export default class MainController {
+    async saveData(currentData: {}) {
+        // save the data to the github gist
+        const { token, gist_id } = config.get("github");
+
+        const octokit = new Octokit({
+            auth: token,
+        });
+        const olk = await octokit.request(`PATCH /gists/${gist_id}`, {
+            gist_id: gist_id,
+            files: {
+                "protonSaves.json": {
+                    content: JSON.stringify({ saves: currentData }),
+                },
+            },
+        });
+    }
+
+    async getCurrentData() {
+        // fetch the data from the proton db
+        // https://www.protondb.com/data/counts.json
+        try {
+            const res = await axios.get('https://www.protondb.com/data/counts.json');
+            return res.data;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
 
-// const Main = async () => {
-//     let cursor = "*";
-//     let reviewNum = 0;
-//     let numberOfRuns = 0;
-//     try {
+    async getStoredData() {
+        // fetch the array from the github gist
+        try {
+            const res = await axios.get("https://gist.githubusercontent.com/teobot/4c7c2c3d620ba53e0c925d732db2c7ea/raw");
+            return res.data.saves;
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
-//         let empty = false
-//         while (!empty) {
-//             numberOfRuns++;
-//             console.log(`Run ${numberOfRuns}`)
-//             const r = await getAppReviews(1291340, cursor);
-//             if (r.reviews.length === 0) {
-//                 empty = true
-//             } else {
-//                 reviewNum += r.reviews.length
-//                 cursor = r.cursor
-//             }
-//         }
-
-//         console.log(`There are ${reviewNum} reviews`);
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
-
-module.exports = {
-    hello,
-};
+}
